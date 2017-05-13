@@ -1,6 +1,7 @@
 import re
 import math
 import nltk
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 class Build_Index:
 
@@ -16,9 +17,45 @@ class Build_Index:
 		inverted_index : dict of dict of lists
 			{word: {fname: [pos1, pos2]}, ...}, ...}
 		"""
+		
 		self.file_to_terms = self.process_files(fnames)  # returns {docID : [word1, word2, ...]}
 		self.regdex = self.make_indices(self.file_to_terms)  # returns {docID: {word: [pos1, pos2, ...]}, ...}
 		self.inverted_index = self.invert_index()  # returns {word: {fname: [pos1, pos2]}, ...}, ...}
+		self.dict_doc_vectors = self.create_document_vectors()
+
+
+	def create_document_vectors(self):
+		"""Create td-idf for documents.
+		
+		Returns
+		-------
+		dict_doc_vectors : {doc1:[vector], doc2:[vector], ... }
+		"""
+		corpus = self._create_corpus(self.file_to_terms)
+		tf_matrix = TfidfVectorizer(stop_words = 'english').fit_transform(corpus).todense().tolist()
+		
+		dict_doc_vectors = {}
+		for i, k in enumerate(self.file_to_terms):
+			dict_doc_vectors[k] = tf_matrix[i]
+		return dict_doc_vectors
+
+
+	def _create_corpus(self, dict_of_ls_tokens):
+		"""Create corpus to fit vectorizer
+		
+		Parameter
+		---------
+		dict_of_ls_tokens : {docID : [word1, word2, ...]}
+
+		Returns
+		-------
+		corpus : list of strings. eg [string1, string2, ...]
+		"""
+		corpus = []
+		for ls_tokens in dict_of_ls_tokens.values():
+			corpus.append(' '.join(ls_tokens))
+		return corpus
+
 
 	def process_files(self, fnames):
 		"""Given list of filenames, generate dict.

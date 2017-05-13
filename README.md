@@ -6,7 +6,8 @@ Bare bones implementation of search.
 * at google, web crawling (downloading of web pages) is executed by several distributed crawlers.
 * typical time for a single http request/response is ~500ms. this includes dns lookup, tcp connection, request over connection, wait for response, close the response. [math](https://www.quora.com/How-fast-should-network-request-response-normally-take-from-server-to-server). crawlers could maintain its own DNS cache so it does not need to do a DNS lookup before crawling each document.
 * In order to speed things up and not wait for each request, you’ll need to make your crawler multi-threaded. This allows the CPU to stay busy working on one response or another, even when each request is taking several seconds to complete. each crawler keeps ~200 connections open at once. [threads](https://blog.hartleybrody.com/scrape-amazon/#code)
-* there are 935m websites according to [atlantic](https://www.theatlantic.com/technology/archive/2015/09/how-many-websites-are-there/408151/). 
+* there are 4.48 billion pages according to [w](http://www.worldwidewebsize.com/). 
+* limit to thread creation: a Python thread costs around 50k of memory, and starting tens of thousands of threads causes failures. If we scale up to tens of thousands of simultaneous operations on concurrent sockets, we run out of threads before we run out of sockets. Per-thread overhead or system limits on threads are the bottleneck. [source](http://aosabook.org/en/500L/a-web-crawler-with-asyncio-coroutines.html)
 
 ## Index
 * disk seek requires ~5.5ms to complete. so keeping index in memory is important.
