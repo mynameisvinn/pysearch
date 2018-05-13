@@ -1,6 +1,6 @@
 class Page(object):
     """
-    page object
+    page object. in pagerank, this is the equivalent of a website.
     
     parameters
     ----------
@@ -13,10 +13,11 @@ class Page(object):
     
     attributes
     ----------
-    parents : list
-        represents inbound links
-    children : list
-        represents outbound links
+    parents : list of Page objects
+        represents inbound links. a parent is a Page object that
+        points to this Page object.
+    children : list of Page objects
+        represents outbound links.
     """
     def __init__(self, name, pagerank=1.0):
         self.name = name
@@ -35,3 +36,27 @@ class Page(object):
     
     def update_pagerank(self, pagerank):
         self.pagerank = pagerank
+
+class PageRank(object):
+    def __init__(self):
+        self.ls_nodes = []
+    
+    def add_page(self, node):
+        self.ls_nodes.append(node)
+        
+    def calculate(self, n_iterations, d):
+        n = float(len(self.ls_nodes))
+
+        for _ in range(n_iterations):
+
+            # for each page...
+            for page in self.ls_nodes:
+
+                # update its pagerank by inspecting its children's pagerank
+                updated_prob = (1-d) * 1/n
+
+                for parent in page.parents:
+
+                    # parents with high pageranks but few outbound are best
+                    updated_prob += d * (parent.pagerank)/parent.count()
+                page.update_pagerank(updated_prob)

@@ -1,2 +1,2 @@
-# Anatomy of Search
-bare bones implementation of search. every search engine consists of (1) crawling, (2) inverting, and (3) ranking.
+# pysearch
+bare bones implementation of search. every search engine consists of (1) crawling, (2) inverting, and (3) ranking. refer to [the anatomy of a search engine](http://infolab.stanford.edu/~backrub/google.html) for a longer discussion.
